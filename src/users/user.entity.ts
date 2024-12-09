@@ -14,6 +14,9 @@ export class User{
     @Column()
     public age: number;
 
+    @Column()
+    public password: string;
+
     constructor(
         id: number,
         lastname: string,
