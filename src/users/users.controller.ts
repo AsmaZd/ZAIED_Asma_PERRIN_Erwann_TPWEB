@@ -1,8 +1,9 @@
-import { Controller, Body, Param, Post, Get, Put, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Body, Param, Post, Get, Put, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { UserInput } from './users.input';
+import { AuthGuard } from '@nestjs/passport';
 
 
 @ApiTags('users')
@@ -20,6 +21,7 @@ constructor(
 		}
 
 	@ApiTags('gets')
+	@UseGuards(AuthGuard('jwt'))
 	@Get()
 	public async getAllUsers(): Promise<User[]> {
 		return this.service.getAllUsers();
