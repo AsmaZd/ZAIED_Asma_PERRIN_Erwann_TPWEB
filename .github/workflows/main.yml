@@ -24,7 +24,7 @@ jobs:
 
       # Installation des dépendances
       - name: Install dependencies
-        run: npm install
+        run: npm install --ignore-scripts
 
       # Exécution du script tests.sh
       - name: Run tests.sh script
