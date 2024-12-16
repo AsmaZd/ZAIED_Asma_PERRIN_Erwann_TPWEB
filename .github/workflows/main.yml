@@ -1,0 +1,35 @@
+name: Node.js CI
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [12.x, 14.x, 16.x]
+        # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
+    steps:
+    - uses: actions/checkout@v2
+    - name: Node.js Production Test Action
+        # You may pin to the exact commit or the version.
+        # uses: boneskull/nodejs-production-test-action@f7f5b14d06630d4d5fae00214877ae5c692829cb
+      uses: boneskull/nodejs-production-test-action@v2.0.0
+      with:
+          # npm script name (as in the `scripts` prop of `package.json``) to run
+        script: ./tests.sh
+          # Space-delimited list of one or more npm workspace names, paths, or a path to a workspace dir. Corresponds to the `--workspace` argument of `npm pack`. If present, will cause `npm run-script` to run for each resulting installation.
+          #workspace: # optional
+          # Pack all workspaces. Corresponds to the `--workspaces` flag of `npm pack`. If true, will cause `npm run-script` to run for each resulting installation. _Boolean._
+          #workspaces: # optional, default is false
+          # If `workspaces` is true, also pack the workspace root. Corresponds to the `--include-workspace-root` flag of `npm pack`. _Boolean._
+          #includeWorkspaceRoot: # optional, default is false
+          # Space-delimited list of extra arguments (including any leading dashes; e.g., `--ignore-scripts`) to use with `npm install /path/to/tarball.tgz`.
+          #extraNpmInstallArgs: # optional
+          # If `true`, print whatever `npm` is doing under the hood.
+        verbose: true # optional, default is false
+          # If `true``, output JSON instead of human-readable text.
+          #json: # optional, default is false
