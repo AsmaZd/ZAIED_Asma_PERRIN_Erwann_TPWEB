@@ -1,66 +1,75 @@
 import { Injectable } from '@nestjs/common';
 import { User } from './user.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Equal, Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
-const users : User[] = [
-	{
-		id: 0,
-		lastname: 'Doe',
-		firstname: 'John',
-		age: 23
-	}
-]
-
-let id: number = users.length - 1;
+let id: number = 0;
 
 @Injectable()
 export class UsersService {
 
+    constructor(
+        @InjectRepository(User)
+        private repository: Repository<User>
+    ){}
+
     //Get
-    getAllUsers(): User[] {
-        return users;
+    public async getAllUsers(): Promise<User[]> {
+        return this.repository.find();
     }
 
-    getById(id : number): User {
-        let filteredId: User[] = users.filter((x) => x.id === id);
-        console.log(id);
-        return filteredId[0];
+    public async getById(idToFind : number): Promise<User> {
+        let filteredId: Promise<User> = this.repository.findOneBy({id: Equal(idToFind)});
+        return filteredId;
     }
 
     //Post
-    create(lastname: string, firstname: string, age: number): User {
-        id ++; 
-        let newUser: User = new User(id, firstname, lastname, age);
-        users.push(newUser);
+    public async create(lastname: string, firstname: string, age: number, password: string): Promise<User> {
+        id ++;
+
+        const saltOrRounds = 10;
+        const hash = await bcrypt.hash(password, saltOrRounds);
+
+        let newUser = this.repository.create({
+            id: id, 
+            firstname: firstname, 
+            lastname: lastname, 
+            age: age, 
+            password: hash
+        })
+        await this.repository.save(newUser);
         return newUser;
     }
 
     //Put
-    putUser(id, lastname: string, firstname: string, age: number): User {
-	let filteredId: User[] = users.filter((x) => x.id === id);
-	if (firstname !== undefined){
-		filteredId[0].firstname = firstname;
-	}
-	if (lastname !== undefined){
-		filteredId[0].lastname = lastname;
-	}
-    if (age !== undefined){
-        filteredId[0].age = age;
-    }
-	return filteredId[0];
+    public async putUser(idToFind, lastname: string, firstname: string, age: number, password: string): Promise<User> {
+        //let filteredId: Promise<User> = this.repository.findOneBy({id: Equal(idToFind)});
+        let filteredId: User = await this.getById(idToFind);
+        if (firstname !== undefined){
+            filteredId.firstname = firstname;
+        }
+        if (lastname !== undefined){
+            filteredId.lastname = lastname;
+        }
+        if (age !== undefined){
+            filteredId.age = age;
+        }
+        if (password !== undefined){
+            filteredId.password = password;
+        }
+        await this.repository.save(filteredId);
+        return filteredId;
     }
 
     //Delete
-    deleteUser(id): number{
-        const index = users.findIndex((x) => x.id === id);
-        if (index === -1){
+    public async deleteUser(idToFind): Promise<number>{
+        const index = await this.repository.findOneBy({id: idToFind});
+        //const index = users.findIndex((x) => x.id === idToFind);
+        if (!index){
             return 1;
         }
-        try {
-            users.splice(index, 1);
-        } catch (error) {
-            //throw new HttpException('Could not delete the user', HttpStatus.NOT_MODIFIED);
-            return 2;
-        }
+        await this.repository.delete(idToFind);
         return 0;
     }
 

@@ -2,7 +2,10 @@ import { Controller, Param, Body, Get, Post, Put, Delete, HttpException, HttpSta
 import { Association } from './association.entity';
 import { AssociationService } from './associations.service';
 import { User } from 'src/users/user.entity';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { AssociationInput } from './associations.input';
 
+@ApiTags('associations')
 @Controller('associations')
 export class AssociationsController {
 
@@ -10,13 +13,15 @@ export class AssociationsController {
         private service: AssociationService
     ){}
 
+    @ApiTags('gets')
     @Get()
-    getAllAssociations(): Association[]{
+    public async getAllAssociations(): Promise<Association[]>{
         return this.service.getAllAssociations();
     }
 
+    @ApiTags('gets')
     @Get(':id')
-    getById(@Param() parameter): Association{
+    public async getById(@Param() parameter): Promise<Association>{
         const result = this.service.getById(+parameter.id);
         if (result === undefined){
             throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
@@ -24,8 +29,9 @@ export class AssociationsController {
         return result;
     }
 
+    @ApiTags('gets')
     @Get(':id/members')
-    getMembers(@Param() parameter): User[]{
+    public async getMembers(@Param() parameter): Promise<User[]>{
         const result = this.service.getMembers(+parameter.id);
         if (result === undefined){
             throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND)
@@ -33,27 +39,32 @@ export class AssociationsController {
         return result;
     }
 
+    @ApiTags('posts')
+    @ApiCreatedResponse({
+        description: 'The association has been successfully created.'
+    })
     @Post()
-    create(@Body() input: any): Association[]{
-        return this.service.create((input.idUsers.map(Number)), input.name);
+    public async create(@Body() input: AssociationInput): Promise<Association>{
+        return this.service.create(input.users, input.name);
     }
 
+    @ApiTags('puts')
     @Put(':id')
-    putAssociation(@Param() parameter, @Body() input: any): Association{
-        const result = this.service.putAssociation(+parameter.id, (input.idUsers.map(Number)), input.name);
+    public async putAssociation(@Param() parameter, @Body() input: AssociationInput): Promise<Association>{
+        const result = this.service.putAssociation(+parameter.id, input.users, input.name);
         if (result === undefined){
             throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
         }
         return result;
     }
 
+    @ApiTags('deletes')
     @Delete(':id')
-    deleteAssociation(@Param() parameter): boolean{
-        const result = this.service.deleteAssociation(+parameter.id);
+    public async deleteAssociation(@Param() parameter): Promise<boolean>{
+        const result = await this.service.deleteAssociation(+parameter.id);
         if (result === 1){
             throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
-        } else if (result === 2){
-            throw new HttpException('Could not delete the user', HttpStatus.NOT_MODIFIED);
+
         }
         return true;
     }

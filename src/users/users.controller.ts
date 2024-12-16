@@ -1,60 +1,70 @@
-import { Controller, Body, Param, Post, Get, Put, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Body, Param, Post, Get, Put, Delete, HttpException, HttpStatus, UseGuards } from '@nestjs/common';
 import { User } from './user.entity';
 import { UsersService } from './users.service';
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { UserInput } from './users.input';
+import { AuthGuard } from '@nestjs/passport';
 
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
 
 constructor(
-	private service: UsersService
-) {}
+		private service: UsersService
+	) {}
 
-@Get('all')
-getAll(): string[] {
-	return ['a', 'b', 'c'];
+	@ApiTags('gets')
+	@Get('all')
+	public async getAll(): Promise<string[]> {
+		return ['a', 'b', 'c'];
+		}
+
+	@ApiTags('gets')
+	@UseGuards(AuthGuard('jwt'))
+	@Get()
+	public async getAllUsers(): Promise<User[]> {
+		return this.service.getAllUsers();
 	}
 
-@Get()
-getAllUsers(): User[] {
-	return this.service.getAllUsers();
-}
-
-
-@Get(':id')
-getById(@Param() parameter): User {
-	const result = this.service.getById(+parameter.id);
-	if (result === undefined){
-		throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+	@ApiTags('gets')
+	@Get(':id')
+	public async getById(@Param() parameter): Promise<User> {
+		const result = this.service.getById(+parameter.id);
+		if (result === undefined){
+			throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+		}
+		return result;
 	}
-	return result;
-}
 
-
-@Post()
-create(@Body() input: any): User {
-	return this.service.create(input.lastname, input.firstname, input.age);
-}
-
-@Put(':id')
-putUser(@Param() parameter, @Body() input: any): User {
-	const result = this.service.putUser(+parameter.id, input.lastname, input.firstname, input.age);
-	if (result === undefined){
-		throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+	@ApiTags('posts')
+	@ApiCreatedResponse({
+		description: 'The user has been successfully created.'
+	})
+	@Post()
+	public async create(@Body() input: UserInput): Promise<User> {
+		return this.service.create(input.lastname, input.firstname, input.age, input.password);
 	}
-	return result;
-}
 
-
-@Delete(':id')
-deleteUser(@Param() parameter): boolean{
-	const result = this.service.deleteUser(+parameter.id);
-	if (result === 1){
-		throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
-	} else if (result === 2){
-		throw new HttpException('Could not delete the user', HttpStatus.NOT_MODIFIED);
+	@ApiTags('puts')
+	@Put(':id')
+	public async putUser(@Param() parameter, @Body() input: UserInput): Promise<User> {
+		const result = this.service.putUser(+parameter.id, input.lastname, input.firstname, input.age, input.password);
+		if (result === undefined){
+			throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+		}
+		return result;
 	}
-	return true;
-}
+
+	@ApiTags('deletes')
+	@Delete(':id')
+	public async deleteUser(@Param() parameter): Promise<boolean>{
+		const result = await this.service.deleteUser(+parameter.id);
+		if (result === 1){
+			throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+
+		}
+		return true;
+		}
 
 }
