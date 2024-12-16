@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12.x, 14.x, 16.x] # Versions de Node.js à tester
+        node-version: [16.x] # Versions de Node.js à tester
     steps:
       # Vérification du code
       - name: Checkout code
