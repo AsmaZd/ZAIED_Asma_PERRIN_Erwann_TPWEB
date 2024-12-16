@@ -45,6 +45,8 @@ export class UsersService {
     //Put
     public async putUser(idToFind, lastname: string, firstname: string, age: number, password: string): Promise<User> {
         //let filteredId: Promise<User> = this.repository.findOneBy({id: Equal(idToFind)});
+
+
         let filteredId: User = await this.getById(idToFind);
         if (firstname !== undefined){
             filteredId.firstname = firstname;
@@ -56,7 +58,9 @@ export class UsersService {
             filteredId.age = age;
         }
         if (password !== undefined){
-            filteredId.password = password;
+            const saltOrRounds = 10;
+            const hash = await bcrypt.hash(password, saltOrRounds);
+            filteredId.password = hash;
         }
         await this.repository.save(filteredId);
         return filteredId;
