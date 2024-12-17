@@ -1,53 +1,25 @@
 #!/bin/sh
 
-request() {
-    method=${1}
-    url=${2}
-    expected_http_status=${3}
-    parameters=${4}
-    if [ -z "${parameters}" ]
-    then
-        echo "curl -X ${method} -o /dev/null -s -w "%{http_code}\n" --header 'Accept: application/json' ${url}"
-        http_status=`curl -X ${method} -o /dev/null -s -w "%{http_code}\n" --header 'Accept: application/json' ${url}`
-    else
-        echo "curl -X ${method} -d '${parameters}' -o /dev/null -s -w "%{http_code}\n" --header 'Accept: application/json' ${url}"
-        http_status=`curl -X ${method} -d ${parameters} -o /dev/null -s -w "%{http_code}\n" --header 'Accept: application/json' ${url}`
-    fi
-    if [ ${http_status} != ${expected_http_status} ]
-    then
-        echo "${method} ${url} ${parameters} ${http_status} while expecting ${expected_http_status}"
-        exit 1
-    fi
-}
+# Enregistre les noms des dbs
+DB_FILE="mydatabase.db"
+BACKUP_FILE="mydatabase.db.old"
 
-get() {
-    request GET ${1} ${2} ${3}
-}
+# Verifie si le fichier existe
+if [[ ! -f "$DB_FILE" ]]; then
+  echo "Erreur : La base de données '$DB_FILE' n'existe pas."
+  exit 1
+fi
 
-post() {
-    request POST ${1} ${2} ${3}
-}
+# Création d'une sauvegarde
+cp "$DB_FILE" "$BACKUP_FILE"
+echo "Sauvegarde effectuée : $DB_FILE -> $BACKUP_FILE"
 
-put() {
-    request PUT ${1} ${2} ${3}
-}
+# Suppression des donées de la database
+sqlite3 "$DB_FILE" "DELETE FROM sqlite_master WHERE type IN ('table', 'index', 'trigger'); VACUUM;"
+echo "Toutes les données de '$DB_FILE' ont été supprimées."
 
-delete() {
-    request DELETE ${1} ${2} ${3}
-}
+./test/crud_roles.sh
 
-post http://localhost:3000/users 201 "firstname=John&lastname=Doe&age=23&password=mdp"
-post http://localhost:3000/users 201 "firstname=Janette&lastname=Doe&age=32&password=mdp"
-post http://localhost:3000/associations 201 "idUsers[]=1&idUsers[]=2&name=Assoc1"
-
-post http://localhost:3000/roles 201 "name=member&idUser=1&idAssociation=1"
-post http://localhost:3000/roles 201 "name=president&idUser=2&idAssociation=1"
-
-get http://localhost:3000/roles/1/1 200
-get http://localhost:3000/roles/2/1 200
-get http://localhost:3000/roles/2/2 404
-
-put http://localhost:3000/roles/1/1 200 "name=treasurer"
-
-delete http://localhost:3000/roles/1/1 200
-get http://localhost:3000/roles/1/1 404
+# Restauration depuis la sauvegarde
+cp "$BACKUP_FILE" "$DB_FILE"
+echo "Données restaurées depuis '$BACKUP_FILE' vers '$DB_FILE'."
