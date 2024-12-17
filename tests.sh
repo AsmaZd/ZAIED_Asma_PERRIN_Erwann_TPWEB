@@ -25,25 +25,29 @@ get() {
 }
 
 post() {
-    request POST ${1} ${2} "${3}"
+    request POST ${1} ${2} ${3}
 }
 
 put() {
-    request PUT ${1} ${2} "${3}"
+    request PUT ${1} ${2} ${3}
 }
 
 delete() {
     request DELETE ${1} ${2} ${3}
 }
 
-post http://localhost:3000/users 201 "firstname=John&lastname=Doe&age=23"
-post http://localhost:3000/users 201 "firstname=Janette&lastname=Doe&age=32"
+post http://localhost:3000/users 201 "firstname=John&lastname=Doe&age=23&password=mdp"
+post http://localhost:3000/users 201 "firstname=Janette&lastname=Doe&age=32&password=mdp"
 post http://localhost:3000/associations 201 "idUsers[]=1&idUsers[]=2&name=Assoc1"
-post http://localhost:3000/associations 201 "idUsers[]=1&name=Assoc2"
 
-get  http://localhost:3000/users/1 200
-get  http://localhost:3000/users/2 200
-get  http://localhost:3000/associations/1 200
-get  http://localhost:3000/associations/2 200
+post http://localhost:3000/roles 201 "name=member&idUser=1&idAssociation=1"
+post http://localhost:3000/roles 201 "name=president&idUser=2&idAssociation=1"
 
-get  http://localhost:3000/associations/2/members 200
+get http://localhost:3000/roles/1/1 200
+get http://localhost:3000/roles/2/1 200
+get http://localhost:3000/roles/2/2 404
+
+put http://localhost:3000/roles/1/1 200 "name=treasurer"
+
+delete http://localhost:3000/roles/1/1 200
+get http://localhost:3000/roles/1/1 404
