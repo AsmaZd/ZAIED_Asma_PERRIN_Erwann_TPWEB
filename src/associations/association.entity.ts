@@ -27,4 +27,9 @@ export class Association{
         this.users = users;
         this.name = name;
     }
+
+    /*
+    getId(){
+        return this.id;
+    }*/
 }

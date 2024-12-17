@@ -41,6 +41,7 @@ constructor(
 	@ApiCreatedResponse({
 		description: 'The user has been successfully created.'
 	})
+	
 	@Post()
 	public async create(@Body() input: UserInput): Promise<User> {
 		return this.service.create(input.lastname, input.firstname, input.age, input.password);

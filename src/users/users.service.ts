@@ -28,8 +28,11 @@ export class UsersService {
     public async create(lastname: string, firstname: string, age: number, password: string): Promise<User> {
         id ++;
 
-        const saltOrRounds = 10;
-        const hash = await bcrypt.hash(password, saltOrRounds);
+        let hash = undefined;
+        if (password !== undefined){
+            const saltOrRounds = 10;
+            hash = await bcrypt.hash(password, saltOrRounds);
+        }
 
         let newUser = this.repository.create({
             id: id, 

@@ -64,9 +64,9 @@ export class AssociationService {
 
     //Post
     public async create(users: User[], name: string): Promise<Association>{
-        id ++;
+        //id ++;
         const newAssociation = this.repository.create({
-            id: id,
+            //id: id,
             users: users,
             name: name
         })
