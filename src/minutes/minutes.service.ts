@@ -13,6 +13,8 @@ export class MinutesService {
         private repository: Repository<Minute>
     ){}
 
+    //Get
+
     public async getAllMinutes(): Promise<Minute[]>{
         return this.repository.find();
     }
@@ -24,8 +26,6 @@ export class MinutesService {
         })
         return filteredMinute;
     }
-
-    //Get
 
     public async getByAssociation(id_association: number): Promise<Minute[]>{
         let filteredMinute: Promise<Minute[]> = this.repository.find({
@@ -41,26 +41,19 @@ export class MinutesService {
     //Post
     public async create(content: string, idVoters: number[], date: string, idAssociation: number): Promise<Minute> {
 
-        //const users = await this.repository.manager.getRepository(User).findBy({ id: In(idVoters) });
-        console.log('halo')
         const association = await this.repository.manager.getRepository(Association).findOne({
             where: {id: idAssociation},
             relations: ['users'],
         });
-        console.log('associtaion')
-        console.log(association)
+
         const assUsersId = association.users.map(user => user.id)
-        console.log('assurid')
-        console.log(assUsersId)
+
         const invalidVoters = idVoters.filter(voterId => !assUsersId.includes(Number(voterId)));
         if (invalidVoters.length > 0) {
-            console.log(invalidVoters)
             return undefined
         }
-        console.log('eeet la')
 
         const users = await this.repository.manager.getRepository(User).findBy({ id: In(idVoters) });
-
 
         let newMinute = this.repository.create({
             date: date,
@@ -69,8 +62,6 @@ export class MinutesService {
             association: association, 
         })
 
-        console.log('je creer une minute ')
-        console.log(newMinute)
         await this.repository.save(newMinute);
         return newMinute;
     }

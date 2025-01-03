@@ -24,9 +24,8 @@ export class MinutesController {
     @Get(':id')
     public async getMinute(@Param() parameter): Promise<Minute>{
         const result = await this.service.getMinute(+parameter.id)
-        console.log(result)
         if (result === null){
-            throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND)
+            throw new HttpException('Could not find a minute with the id ${parameter.id}', HttpStatus.NOT_FOUND)
         }
         return result;
     }
@@ -35,7 +34,7 @@ export class MinutesController {
     public async getByAssociation(@Param() parameter): Promise<Minute[]>{
         const result = await this.service.getByAssociation(+parameter.id_association)
         if (result === null){
-            throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND)
+            throw new HttpException('Could not find a minute with the id ${parameter.id}', HttpStatus.NOT_FOUND)
         }
         return result;
     }
@@ -53,6 +52,7 @@ export class MinutesController {
     } 
 
     //PUT
+
     @ApiTags('puts')
     @Put(':id')
     public async putMinute(@Param() parameter, @Body() input: MinuteInput): Promise<Minute> {
@@ -64,6 +64,7 @@ export class MinutesController {
     }
     
     //DELETE
+
     @ApiTags('deletes')
     @Delete(':id')
 	public async deleteMinute(@Param() parameter): Promise<boolean>{

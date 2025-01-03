@@ -47,8 +47,6 @@ export class UsersService {
 
     //Put
     public async putUser(idToFind, lastname: string, firstname: string, age: number, password: string): Promise<User> {
-        //let filteredId: Promise<User> = this.repository.findOneBy({id: Equal(idToFind)});
-
 
         let filteredId: User = await this.getById(idToFind);
         if (firstname !== undefined){
@@ -72,7 +70,7 @@ export class UsersService {
     //Delete
     public async deleteUser(idToFind): Promise<number>{
         const index = await this.repository.findOneBy({id: idToFind});
-        //const index = users.findIndex((x) => x.id === idToFind);
+
         if (!index){
             return 1;
         }

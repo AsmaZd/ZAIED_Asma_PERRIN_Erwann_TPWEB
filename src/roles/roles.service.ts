@@ -20,41 +20,25 @@ export class RolesService {
         return this.repository.find();
     }
 
-    /*
-    public async getById(idToFind): Promise<Role>{
-        let filteredId: Promise<Role> = this.repository.findOneBy({id: Equal(idToFind)});
-        return filteredId;
-    }
-    */
-
     public async getRole(id_user: number, id_association: number): Promise<Role>{
-        console.log(id_user)
-        console.log(id_association)
+
         let filteredUser: Promise<Role> = this.repository.findOne({
             where: {
                 id_user: id_user,
                 id_association: id_association
             }
         })
-        console.log("salut")
-        console.log(filteredUser)
+
         return filteredUser;
     }
 
     //Post
     public async create(name: string, id_user: number, id_association: number): Promise<Role> {
-        console.log(name)
-        console.log(id_user)
-        console.log(id_association)
-        //id ++;
+
         const user = await this.repository.manager.getRepository(User).findOne({where: {id: id_user} });
         const association= await this.repository.manager.getRepository(Association).findOne({where: {id: id_association} });
-        console.log(user)
-        console.log(association)
-
 
         let newRole = this.repository.create({
-            //id: id, 
             id_user: id_user,
             id_association: id_association,
             name: name,
@@ -62,7 +46,6 @@ export class RolesService {
             association: association, 
         })
 
-        console.log(newRole)
         await this.repository.save(newRole);
         return newRole;
     }

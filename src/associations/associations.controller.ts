@@ -24,7 +24,7 @@ export class AssociationsController {
     public async getById(@Param() parameter): Promise<Association>{
         const result = this.service.getById(+parameter.id);
         if (result === undefined){
-            throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+            throw new HttpException('Could not find an association with the id ${parameter.id}', HttpStatus.NOT_FOUND);
         }
         return result;
     }
@@ -34,7 +34,7 @@ export class AssociationsController {
     public async getMembers(@Param() parameter): Promise<User[]>{
         const result = this.service.getMembers(+parameter.id);
         if (result === undefined){
-            throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND)
+            throw new HttpException('Could not find an association with the id ${parameter.id}', HttpStatus.NOT_FOUND)
         }
         return result;
     }
@@ -53,7 +53,7 @@ export class AssociationsController {
     public async putAssociation(@Param() parameter, @Body() input: AssociationInput): Promise<Association>{
         const result = this.service.putAssociation(+parameter.id, input.name, input.idUsers);
         if (result === undefined){
-            throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+            throw new HttpException('Could not find an associtaion with the id ${parameter.id}', HttpStatus.NOT_FOUND);
         }
         return result;
     }
@@ -63,7 +63,7 @@ export class AssociationsController {
     public async deleteAssociation(@Param() parameter): Promise<boolean>{
         const result = await this.service.deleteAssociation(+parameter.id);
         if (result === 1){
-            throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+            throw new HttpException('Could not find an association with the id ${parameter.id}', HttpStatus.NOT_FOUND);
 
         }
         return true;

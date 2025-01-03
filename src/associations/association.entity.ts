@@ -6,10 +6,6 @@ export class Association{
     @PrimaryGeneratedColumn()
     public id: number;
 
-    //@Column()
-   // public users: User[];
-    //public idUsers: number[];
-
     @Column()
     public name: string;
 
@@ -17,7 +13,7 @@ export class Association{
     @JoinTable()
     users: User[];
 
-    //plus utile
+    /*plus utile
     constructor(
         id: number,
         users: User[],
@@ -27,9 +23,7 @@ export class Association{
         this.users = users;
         this.name = name;
     }
+        
+    */
 
-    /*
-    getId(){
-        return this.id;
-    }*/
 }

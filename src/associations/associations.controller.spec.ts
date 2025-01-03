@@ -47,7 +47,7 @@ describe('AssociationsController', () => {
   });
 
   describe('getById', () => {
-    it('should return a single associtaion, with the provided id', async () => {
+    it('should return a single association, with the provided id', async () => {
       const expected = await Promise.all([{ 
           id: 0, 
           users: [{id:0, firstname:'John', lastname:'Doe', age:23, password:'motdepass'}, {id:1, firstname:'Lena', lastname:'Doe', age:21, password:'motpasse'}],
