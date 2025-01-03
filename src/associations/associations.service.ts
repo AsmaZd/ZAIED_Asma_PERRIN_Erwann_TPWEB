@@ -3,7 +3,7 @@ import { Association } from './association.entity';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, Repository } from 'typeorm';
+import { Equal, In, Repository } from 'typeorm';
 
 /*
 const associations : Association[] = [
@@ -63,12 +63,18 @@ export class AssociationService {
     }
 
     //Post
-    public async create(users: User[], name: string): Promise<Association>{
+    public async create(idUsers: number[], name: string): Promise<Association>{
         //id ++;
+        console.log('idUsers')
+        console.log(idUsers)
+        const users = await this.repository.manager.getRepository(User).findBy({ id: In(idUsers) });
+        //const users = await this.repository.findBy({ id: In(idUsers) });
+        console.log(users)
         const newAssociation = this.repository.create({
             //id: id,
-            users: users,
-            name: name
+
+            name: name,
+            users: users
         })
         await this.repository.save(newAssociation);
         //let newAssociation: Association = new Association(id, idUsers, name);
@@ -77,11 +83,17 @@ export class AssociationService {
     }
 
     //Put
-    public async putAssociation(idToFind, idUsers: User[], name: string): Promise<Association>{
+    public async putAssociation(idToFind, name: string, idUsers: number[]): Promise<Association>{
         let filteredId : Association = await this.repository.findOneBy(idToFind); 
         //let filteredId: Association[] = associations.filter((x) => x.id === idToFind);
+        
         if (idUsers !== undefined){
-            filteredId.users = idUsers;
+
+            const users = await this.repository.manager.getRepository(User).findBy({
+                id: In(idUsers),
+            });
+
+            filteredId.users = users;
         }
         if (name !== undefined){
             filteredId.name = name;

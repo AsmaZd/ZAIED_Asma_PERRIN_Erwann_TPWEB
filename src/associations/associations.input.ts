@@ -15,10 +15,10 @@ export class AssociationInput {
     @ApiProperty({
         description: 'An array of the users that are associated',
         example: '[{id:0, firstname:John, lastname:Doe, age:23, password:motdepasse}, {id:1, firstname:Lena, lastname:Doe, age:21, password:motdepasse}]',
-        type: User,
+        type: Number,
         isArray: true,
     })
-    public users: User[];
+    public idUsers: number[];
 
 
 }

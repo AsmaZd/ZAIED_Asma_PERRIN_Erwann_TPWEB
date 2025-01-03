@@ -45,13 +45,13 @@ export class AssociationsController {
     })
     @Post()
     public async create(@Body() input: AssociationInput): Promise<Association>{
-        return this.service.create(input.users, input.name);
+        return this.service.create(input.idUsers, input.name);
     }
 
     @ApiTags('puts')
     @Put(':id')
     public async putAssociation(@Param() parameter, @Body() input: AssociationInput): Promise<Association>{
-        const result = this.service.putAssociation(+parameter.id, input.users, input.name);
+        const result = this.service.putAssociation(+parameter.id, input.name, input.idUsers);
         if (result === undefined){
             throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
         }
