@@ -3,7 +3,13 @@ import { Association } from './association.entity';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'src/users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, Repository } from 'typeorm';
+import { Equal, In, Repository } from 'typeorm';
+import { Role } from 'src/roles/role.entity';
+//import { AssociationDTO } from './association.dto';
+import { Member } from './association.member';
+import { AssociationDTO } from './association.dto';
+import { Minute } from 'src/minutes/minute.entity';
+//import { AssociationDTO } from './association.dto';
 
 /*
 const associations : Association[] = [
@@ -16,7 +22,7 @@ const associations : Association[] = [
 */
 
 
-let id: number = 0;
+//let id: number = 0;
 
 @Injectable()
 export class AssociationService {
@@ -25,35 +31,50 @@ export class AssociationService {
         private service: UsersService,
 
         @InjectRepository(Association)
-        private repository: Repository<Association>
+        private repository: Repository<Association>,
+        @InjectRepository(Minute)
+        private minuteRepository: Repository<Minute>
     ) {}
 
-    //Get
-    public async getAllAssociations(): Promise<Association[]>{
-        return this.repository.find();
+
+    // Transforme une association en associationDTO
+    private async toDTO(association: Association): Promise<AssociationDTO> {
+        const dto = new AssociationDTO();
+        dto.name = association.name;
+    
+        // Charger les rôles associés à l'association
+        const roles = await this.repository.manager.getRepository(Role).find({
+          where: { association: { id: association.id } },
+          relations: ['user'], // Charger les utilisateurs liés aux rôles
+        });
+    
+        // Transformer les utilisateurs et leurs rôles en membres
+        const members: Member[] = roles.map((role) => {
+          const member = new Member();
+          member.firstname = role.user.firstname;
+          member.lastname = role.user.lastname;
+          member.age = role.user.age;
+          member.role = role.name;
+          return member;
+        });
+    
+        dto.members = members;
+        return dto;
     }
 
-    public async getById(idToFind): Promise<Association>{
-        //let filteredId: Association[] = associations.filter((x) => x.id === idToFind);
-        let filteredId: Promise<Association> = this.repository.findOneBy(idToFind);
-        return filteredId;
+    //Get
+    public async getAllAssociations(): Promise<AssociationDTO[]>{
+        const associations = await this.repository.find();
+        return Promise.all(associations.map(association => this.toDTO(association)));
+    }
+
+    public async getById(idToFind): Promise<AssociationDTO>{
+        let filteredId = await this.repository.findOneBy(idToFind);
+        return this.toDTO(filteredId);
     }
 
     public async getMembers(idToFind): Promise<User[]>{
-        /*
-        //let userId = await this.getById(idToFind).users;
-        const userId = await this.repository.findOne({
-            where: {id: Equal(idToFind)},
-            select: ['users']
-        });
-        //let userId = (this.getById(idToFind)).idUsers;
-        //const ans : User[] = [this.service.getById(0)];
-        //const ans : User[] = userId.map(this.service.getById);
-        const members = await Promise.all(userId.users.map(async (usId: number) => {
-            return this.service.getById(usId);
-        }));
-        //console.log(this.service.getById(0));
-        */
+
        const userId = await this.repository.findOne({
             where: {id: Equal(idToFind)},
             select: ['users']
@@ -62,26 +83,53 @@ export class AssociationService {
         return userId ? userId.users : [] ;
     }
 
+    /*
+    public async getProcesByAssociation(id: number, sort: string, order: 'ASC' | 'DESC'): Promise<Minute[]> {
+        const association = await this.repository.findOne({
+          where: { id },
+        });
+    
+        if (!association) {
+          throw new Error('Association not found');
+        }
+    
+        const minutes = await this.minuteRepository.find({
+          where: { association: { id } },
+          order: {
+            [sort]: order,  // Tri par la date
+          },
+        });
+    
+        return minutes;
+      
+    }
+        */
+
     //Post
-    public async create(users: User[], name: string): Promise<Association>{
-        //id ++;
+    public async create(idUsers: number[], name: string): Promise<Association>{
+
+        const users = await this.repository.manager.getRepository(User).findBy({ id: In(idUsers) });
+
         const newAssociation = this.repository.create({
-            //id: id,
-            users: users,
-            name: name
+            name: name,
+            users: users
         })
+
         await this.repository.save(newAssociation);
-        //let newAssociation: Association = new Association(id, idUsers, name);
-        //associations.push(newAssociation);
         return newAssociation;
     }
 
     //Put
-    public async putAssociation(idToFind, idUsers: User[], name: string): Promise<Association>{
+    public async putAssociation(idToFind, name: string, idUsers: number[]): Promise<Association>{
         let filteredId : Association = await this.repository.findOneBy(idToFind); 
-        //let filteredId: Association[] = associations.filter((x) => x.id === idToFind);
+
         if (idUsers !== undefined){
-            filteredId.users = idUsers;
+
+            const users = await this.repository.manager.getRepository(User).findBy({
+                id: In(idUsers),
+            });
+
+            filteredId.users = users;
         }
         if (name !== undefined){
             filteredId.name = name;
@@ -93,17 +141,9 @@ export class AssociationService {
     //Delete
     public async deleteAssociation(idToFind): Promise<number>{
         const index = this.repository.findOneBy(idToFind);
-        //const index = associations.findIndex((x) => x.id === idToFind);
         if (!index){
             return 1;
         }
-        /*
-        try {
-            associations.splice(index, 1);
-        } catch (error) {
-            return 2;
-        }
-            */
         return 0;
     }
 }
