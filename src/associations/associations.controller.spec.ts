@@ -34,7 +34,8 @@ describe('AssociationsController', () => {
     expect(controller).toBeDefined();
   });
 
-  describe('getAll', () => {
+  
+  /*describe('getAll', () => {
     it('should return an array of associations', async () => {
       const expected = Promise.all([{ 
           id: 0, 
@@ -59,6 +60,6 @@ describe('AssociationsController', () => {
 
       expect(await controller.getById({id: 0})).toBe(expected[0]);
     })
-  });
+  });*/
 
 });

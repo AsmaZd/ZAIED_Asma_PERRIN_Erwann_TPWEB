@@ -4,6 +4,7 @@ import { UsersService } from './users.service';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { UserInput } from './users.input';
 import { AuthGuard } from '@nestjs/passport';
+import { Role } from 'src/roles/role.entity';
 
 
 @ApiTags('users')
@@ -36,6 +37,18 @@ constructor(
 		}
 		return result;
 	}
+
+	@ApiTags('gets')
+	@Get(':id/roles')
+	public async getRoles(@Param() parameter): Promise<string[]> {
+		const result = this.service.getRoles(+parameter.id);
+		if (result === undefined){
+			throw new HttpException('Could not find a user with the id ${parameter.id}', HttpStatus.NOT_FOUND);
+		}
+		return result;
+	}
+
+
 
 	@ApiTags('posts')
 	@ApiCreatedResponse({

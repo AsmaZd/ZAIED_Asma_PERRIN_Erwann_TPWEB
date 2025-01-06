@@ -1,9 +1,12 @@
-import { Controller, Param, Body, Get, Post, Put, Delete, HttpException, HttpStatus } from '@nestjs/common';
+import { Controller, Param, Body, Get, Post, Put, Delete, HttpException, HttpStatus, Query } from '@nestjs/common';
 import { Association } from './association.entity';
 import { AssociationService } from './associations.service';
 import { User } from 'src/users/user.entity';
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
 import { AssociationInput } from './associations.input';
+import { AssociationDTO } from './association.dto';
+import { Minute } from 'src/minutes/minute.entity';
+//import { AssociationDTO } from './association.dto';
 
 @ApiTags('associations')
 @Controller('associations')
@@ -15,13 +18,13 @@ export class AssociationsController {
 
     @ApiTags('gets')
     @Get()
-    public async getAllAssociations(): Promise<Association[]>{
+    public async getAllAssociations(): Promise<AssociationDTO[]>{
         return this.service.getAllAssociations();
     }
 
     @ApiTags('gets')
     @Get(':id')
-    public async getById(@Param() parameter): Promise<Association>{
+    public async getById(@Param() parameter): Promise<AssociationDTO>{
         const result = this.service.getById(+parameter.id);
         if (result === undefined){
             throw new HttpException('Could not find an association with the id ${parameter.id}', HttpStatus.NOT_FOUND);
@@ -38,6 +41,18 @@ export class AssociationsController {
         }
         return result;
     }
+
+    /*
+    @ApiTags('gets')
+    @Get(':id/minutes')
+    public async getProcesByAssociation(@Param() parameter, @Query('sort') sort: string = 'date', @Query('order') order: 'ASC' | 'DESC' = 'DESC'): Promise<Minute[]>{
+        const result = this.service.getProcesByAssociation(+parameter.id, sort, order);
+        if (result === undefined){
+            throw new HttpException('Could not find an association with the id ${parameter.id}', HttpStatus.NOT_FOUND)
+        }
+        return result;
+    } */   
+
 
     @ApiTags('posts')
     @ApiCreatedResponse({

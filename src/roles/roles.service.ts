@@ -1,9 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role } from './role.entity';
 import { Equal, Repository } from 'typeorm';
 import { User } from 'src/users/user.entity';
 import { Association } from 'src/associations/association.entity';
+import { UsersService } from 'src/users/users.service';
 
 let id: number = 0;
 
@@ -12,7 +13,9 @@ export class RolesService {
 
     constructor(
         @InjectRepository(Role)
-        private repository: Repository<Role>
+        private repository: Repository<Role>,
+        @Inject(forwardRef(() => UsersService))
+        private roleService : UsersService
     ){}
 
     //Get
@@ -31,6 +34,27 @@ export class RolesService {
 
         return filteredUser;
     }
+
+    public async getRoleByUser(id_user: number): Promise<Role[]>{
+        let filteredId: Promise<Role[]> = this.repository.find({
+            where: { id_user: id_user}
+        })
+        return filteredId;
+    }
+
+    /*
+    public async getUsersByRole(name: string): Promise<User[]>{
+        console.log(name)
+        const roles = await this.repository.find({
+            where: { name: name}, 
+            relations: ['user']
+        });
+
+        const users: User[] = roles.map((role) => role.user );
+
+        return users;
+    }
+        */
 
     //Post
     public async create(name: string, id_user: number, id_association: number): Promise<Role> {

@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { User } from './user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
+import { Role } from 'src/roles/role.entity';
+import { RolesService } from 'src/roles/roles.service';
 
 let id: number = 0;
 
@@ -11,7 +13,9 @@ export class UsersService {
 
     constructor(
         @InjectRepository(User)
-        private repository: Repository<User>
+        private repository: Repository<User>,
+        @Inject(forwardRef(() => RolesService))
+        private roleService : RolesService
     ){}
 
     //Get
@@ -22,6 +26,12 @@ export class UsersService {
     public async getById(idToFind : number): Promise<User> {
         let filteredId: Promise<User> = this.repository.findOneBy({id: Equal(idToFind)});
         return filteredId;
+    }
+
+    public async getRoles(idToFind: number): Promise<string[]> {
+        const userRoles = this.roleService.getRoleByUser(idToFind)
+        const listRoles = (await userRoles).map(role => role.name)
+        return listRoles;
     }
 
     //Post

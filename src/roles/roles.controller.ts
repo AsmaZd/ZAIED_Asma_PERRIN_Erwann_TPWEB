@@ -4,6 +4,7 @@ import { RolesService } from './roles.service';
 import { Role } from './role.entity';
 import { MssqlParameter } from 'typeorm';
 import { RoleInput } from './role.input';
+import { User } from 'src/users/user.entity';
 
 @ApiTags('associations')
 @Controller('roles')
@@ -30,6 +31,27 @@ export class RolesController {
         }
         return result;
     }
+
+    @Get(':id_user')
+    public async getRoleByUser(@Param() parameter): Promise<Role[]>{
+        const result = await this.service.getRoleByUser(+parameter)
+        if (result === null){
+            throw new HttpException('Could not find a role with the id ${parameter1.id_user} or an association with the id ${parameter2.id_association)', HttpStatus.NOT_FOUND)
+        }
+        return result;
+    }
+
+    /*
+    @Get('users/:name')
+    public async getUsersByRole(@Param() parameter): Promise<User[]>{
+        console.log(parameter)
+        const result = await this.service.getUsersByRole(parameter)
+        if (result === null){
+            throw new HttpException('Could not find a role with the id ${parameter1.id_user} or an association with the id ${parameter2.id_association)', HttpStatus.NOT_FOUND)
+        }
+        return result;
+    }
+        */
 
     //POST
 
