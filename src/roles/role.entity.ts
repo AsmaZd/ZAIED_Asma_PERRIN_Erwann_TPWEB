@@ -14,11 +14,11 @@ export class Role{
     public name: string;
     
     @ManyToOne(type => User, {eager: true})
-    @JoinColumn({ name: 'id_user '})
+    @JoinColumn({ name: 'id_user'})
     public user: User;
 
     @ManyToOne(type => Association, {eager: true})
-    @JoinColumn({ name: 'id_assocition'})
+    @JoinColumn({ name: 'id_association'})
     public association: Association;
 
     /*
