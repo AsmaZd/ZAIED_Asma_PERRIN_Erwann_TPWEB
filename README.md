@@ -62,7 +62,7 @@ Voici la liste des endpoints API disponible dans le backend.
 - ```GET /associations/:id``` : Récupère une association par son id.
 - ```GET /associations/:id/members``` : Récupère les membres d'une association.
 - ```GET /associations/:id/minutes``` : Liste de tous les procèes verbaux d'une association. \
-Possibilité de les trier en fonction de la date avec les paramètres 'sort=date' et 'order=DESC' ou 'order=ASC'.
+Possibilité de les trier en fonction de la date avec les paramètres ```sort=date``` et ```order=DESC``` ou ```order=ASC```.
 - ```POST /associations``` : Crée une nouvelle association.
 - ```PUT /associations/:id``` : Modifie les données d'une association (en donnant l'id de l'association souhaité).
 - ```DELETE /associations/:id``` : Supprime une association (en donnant l'id de l'association souhaité).
