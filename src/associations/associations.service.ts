@@ -30,6 +30,10 @@ export class AssociationService {
         private repository: Repository<Association>,
         @InjectRepository(Minute)
         private minuteRepository: Repository<Minute>,
+        @InjectRepository(Role)
+        private roleRepository: Repository<Role>,
+        @InjectRepository(User)
+        private userRepository: Repository<User>
     ) {}
 
 
@@ -97,9 +101,10 @@ export class AssociationService {
 
     //Post
     public async create(idUsers: number[], name: string): Promise<Association>{
+        console.log(idUsers)
 
-        const users = await this.repository.manager.getRepository(User).findBy({ id: In(idUsers) });
-
+        const users = await this.userRepository.findByIds(idUsers);
+        console.log(users)
         const newAssociation = this.repository.create({
             name: name,
             users: users
@@ -130,10 +135,12 @@ export class AssociationService {
 
     //Delete
     public async deleteAssociation(idToFind): Promise<number>{
-        const index = this.repository.findOneBy({id: Equal(idToFind)});
+        const index = await this.repository.findOneBy({id: idToFind});
         if (!index){
             return 1;
         }
+        await this.roleRepository.delete({id_association: idToFind})
+        await this.repository.delete(idToFind);
         return 0;
     }
 }

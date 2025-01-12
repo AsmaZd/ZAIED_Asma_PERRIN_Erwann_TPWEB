@@ -63,6 +63,8 @@ export class AssociationsController {
     })
     @Post()
     public async create(@Body() input: AssociationInput): Promise<Association>{
+        console.log("Received input:", input); // Log de l'objet input complet
+        console.log("contr" + input.idUsers);  
         return this.service.create(input.idUsers, input.name);
     }
 
