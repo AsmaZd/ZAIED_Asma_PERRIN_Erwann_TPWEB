@@ -50,21 +50,12 @@ export class AssociationsController {
         @Param() parameter, 
         @Query('sort') sort: string = 'date', 
         @Query('order') order: 'ASC' | 'DESC' = 'DESC' ): Promise<{content: string; date: Date}[]> {
-        console.log(order)
         const result = await this.service.getProcesByAssociation(+parameter.id, sort, order);
         if (result === undefined){
             throw new HttpException('Could not find an association with the id ${parameter.id}', HttpStatus.NOT_FOUND)
         }
         return result;
     }   
-
-    /*
-    @ApiTags('gets')
-    @Get(':id/users')
-    async getAssociationsByUser(@Param() parameter): Promise<Association[]> {
-      return await this.service.getAssociationsByUser(+parameter.id);
-    }
-*/
 
     @ApiTags('posts')
     @ApiCreatedResponse({

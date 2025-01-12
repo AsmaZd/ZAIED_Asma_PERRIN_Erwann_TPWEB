@@ -45,6 +45,50 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Différents endpoints
+
+Voici la liste des endpoints API disponible dans le backend.
+
+#### Utilisateurs
+- ```GET /users``` : Liste de tous les utilisateurs.
+- GET /useres/:id : Récupère un utilisateur par son id.
+- GET /users/:id/roles : Récupère les rôles d'un utilisateur (en donnant l'id de l'utilisateur souhaité).
+- POST /users : Crée un nouvel utilisateur.
+- PUT /users/:id : Modifie les données d'un utilisateur (en donnant l'id de l'utilisateur souhaité).
+- DELETE /users/:id : Supprime un utilisateur (en donnant l'id de l'utilisateur souhaité).
+
+#### Associations
+- GET /associations : Liste de toutes les associations.
+- GET /associations/:id : Récupère une association par son id.
+- GET /associations/:id/members : Récupère les membres d'une association.
+- GET /associations/:id/minutes : Liste de tous les procèes verbaux d'une association.
+Possibilité de les trier en fonction de la date avec les paramètres 'sort=date' et 'order=DESC' ou 'order=ASC'.
+- POST /associations : Crée une nouvelle association.
+- PUT /associations/:id : Modifie les données d'une association (en donnant l'id de l'association souhaité).
+- DELETE /associations/:id : Supprime une association (en donnant l'id de l'association souhaité).
+
+#### Rôles
+- GET /roles :Liste de tous les rôles.
+- GET /roles/:id_user/:id_association : Récupère un rôle pour un utilisateur dans une association spécifique.
+- GET /roles/:id_user : Récupère la liste des rôles d'un utilisateur.
+- GET /roles/users/:name :Récupère les utilisateurs ayant pour rôle :name (par exemple member ou president).
+- GET /roles/associations/:id : Récupère la liste des associations et des rôles dont l'utilisateur fait partie.
+- POST /roles : Crée un nouveau rôle.
+- PUT /roles/:id_user/:id_association : Modifie les données d'un rôle (en donnant l'id de l'utilisateur souhaité dans une association spécifique).
+- DELETE /roles/:id_user/:id_association : Supprime un rôle (en donnant l'id de l'utilisateur souhaité dans une association spécifique).
+
+#### Minutes
+- GET /minutes : Liste de tous les procès verbaux.
+- GET /minutes/:id : Récupère un procès verbale par son id.
+- GET /minutes/:id_association/association : Récupère les procès verbaux d'une association spécifique.
+- POST /minutes : Crée un nouveau procès verbale.
+- PUT /minutes/:id : Modifie les données d'un procès verbale (en donnant l'id du procès verbale souhaité).
+- DELETE /minutes/:id : Supprime un procès verbale (en donnant l'id du procès verbale souhaité).
+
+#### Auth
+- POST /auth/login : Authentification et récupération du token JWT.
+
+
 ## Run tests
 
 ```bash

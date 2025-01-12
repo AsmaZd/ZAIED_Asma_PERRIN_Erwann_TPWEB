@@ -17,6 +17,7 @@ export class User{
     @Column()
     public password: string;
 
+    /*
     constructor(
         id: number,
         lastname: string,
@@ -28,4 +29,5 @@ export class User{
         this.lastname = lastname;
         this.age = age;
     }
+        */
 }
