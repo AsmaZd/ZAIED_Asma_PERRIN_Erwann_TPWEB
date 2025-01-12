@@ -10,8 +10,9 @@ request() {
         echo "curl -X ${method} -o /tmp/output_curl -s -w "%{http_code}\n" --header 'Accept: application/json' ${url}"
         http_status=`curl -X ${method} -o /tmp/output_curl -s -w "%{http_code}\n" --header 'Accept: application/json' ${url}`
     else
-        echo "curl -X ${method} -d '${parameters}' -o /tmp/output_curl -s -w "%{http_code}\n" --header 'Accept: application/json' ${url}"
-        http_status=`curl -X ${method} -d ${parameters} -o /tmp/output_curl -s -w "%{http_code}\n" --header 'Accept: application/json' ${url}`
+        full_url="${url}?${parameters}"
+        echo "curl -X ${method} -o /tmp/output_curl -s -w "%{http_code}\n" --header 'Accept: application/json' ${full_url}"
+        http_status=`curl -X ${method} -o /tmp/output_curl -s -w "%{http_code}\n" --header 'Accept: application/json' "${full_url}"`
     fi
     cat /tmp/output_curl
     echo ""
@@ -46,3 +47,6 @@ get http://localhost:3000/roles/users/president 200
 
 get http://localhost:3000/associations/1/minutes 200 "sort=date"
 get http://localhost:3000/associations/1/minutes 200 "sort=date&order=ASC"
+
+get http://localhost:3000/roles/associations/1 200
+get http://localhost:3000/associations 200

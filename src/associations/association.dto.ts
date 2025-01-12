@@ -2,13 +2,12 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Member } from './association.member';
 
 export class AssociationDTO {
-    /*
+  
   @ApiProperty({
     description: "The ID of the association",
     example: 1,
   })
   id: number;
-  */
 
   @ApiProperty({
     description: "The name of the association",

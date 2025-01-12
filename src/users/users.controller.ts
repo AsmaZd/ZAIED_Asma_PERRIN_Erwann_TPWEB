@@ -49,7 +49,6 @@ constructor(
 	}
 
 
-
 	@ApiTags('posts')
 	@ApiCreatedResponse({
 		description: 'The user has been successfully created.'

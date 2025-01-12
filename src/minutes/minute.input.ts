@@ -19,9 +19,9 @@ export class MinuteInput {
     @ApiProperty({
         description: 'The date when the general assembly occured',
         example: "12/12/2021",
-        type: String,
+        type: Date,
     })
-    public date: string;
+    public date: Date;
 
     @ApiProperty({
         description: 'The id of the association',

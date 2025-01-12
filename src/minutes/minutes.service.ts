@@ -39,7 +39,7 @@ export class MinutesService {
 
 
     //Post
-    public async create(content: string, idVoters: number[], date: string, idAssociation: number): Promise<Minute> {
+    public async create(content: string, idVoters: number[], date: Date, idAssociation: number): Promise<Minute> {
 
         const association = await this.repository.manager.getRepository(Association).findOne({
             where: {id: idAssociation},
@@ -69,7 +69,7 @@ export class MinutesService {
 
 
     //Put
-    public async putMinute(id: number, content: string, idVoters: number[], date: string, idAssociation: number): Promise<Minute> {
+    public async putMinute(id: number, content: string, idVoters: number[], date: Date, idAssociation: number): Promise<Minute> {
 
         let filteredId: Minute = await this.getMinute(id);
         if (content !== undefined){

@@ -5,8 +5,9 @@ import { Role } from './role.entity';
 import { MssqlParameter } from 'typeorm';
 import { RoleInput } from './role.input';
 import { User } from 'src/users/user.entity';
+import { Association } from 'src/associations/association.entity';
 
-@ApiTags('associations')
+@ApiTags('roles')
 @Controller('roles')
 export class RolesController {
 
@@ -22,10 +23,27 @@ export class RolesController {
         return this.service.getAllRoles();
     }
 
+        
+    @Get('users/:name')
+    public async getUsersByRole(@Param() parameter): Promise<User[]>{
+        const result = await this.service.getUsersByRole(parameter.name)
+
+        if (result === null){
+            throw new HttpException('Could not find a role with the id ${parameter1.id_user} or an association with the id ${parameter2.id_association)', HttpStatus.NOT_FOUND)
+        }
+        return result;
+    }
+
+    @Get('associations/:id')
+    public async getAssociationsByUsers(@Param() parameter): Promise<{id: number, name: string, role: string}[]>{
+        return this.service.getAssociationsByUser(+parameter.id)
+    }
+
     @Get(':id_user/:id_association')
     public async getRole(@Param() parameter1, @Param() parameter2): Promise<Role>{
+        //console.log('test')
         const result = await this.service.getRole(+parameter1.id_user, +parameter2.id_association)
-        console.log(result)
+        //console.log(result)
         if (result === null){
             throw new HttpException('Could not find a role with the id ${parameter1.id_user} or an association with the id ${parameter2.id_association)', HttpStatus.NOT_FOUND)
         }
@@ -40,18 +58,10 @@ export class RolesController {
         }
         return result;
     }
+        
 
-    /*
-    @Get('users/:name')
-    public async getUsersByRole(@Param() parameter): Promise<User[]>{
-        console.log(parameter)
-        const result = await this.service.getUsersByRole(parameter)
-        if (result === null){
-            throw new HttpException('Could not find a role with the id ${parameter1.id_user} or an association with the id ${parameter2.id_association)', HttpStatus.NOT_FOUND)
-        }
-        return result;
-    }
-        */
+
+        
 
     //POST
 

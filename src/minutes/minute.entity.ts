@@ -7,8 +7,8 @@ export class Minute{
     @PrimaryGeneratedColumn()
     public id: number;
 
-    @Column()
-    public date: string;
+    @Column({ type: 'date'})
+    public date: Date;
 
     @Column()
     public content: string;
