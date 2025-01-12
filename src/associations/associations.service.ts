@@ -130,7 +130,7 @@ export class AssociationService {
 
     //Delete
     public async deleteAssociation(idToFind): Promise<number>{
-        const index = this.repository.findOneBy(idToFind);
+        const index = this.repository.findOneBy({id: Equal(idToFind)});
         if (!index){
             return 1;
         }
