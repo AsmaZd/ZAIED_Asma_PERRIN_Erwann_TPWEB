@@ -5,12 +5,10 @@ import { User } from 'src/users/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, In, Repository, Timestamp } from 'typeorm';
 import { Role } from 'src/roles/role.entity';
-//import { AssociationDTO } from './association.dto';
 import { Member } from './association.member';
 import { AssociationDTO } from './association.dto';
 import { Minute } from 'src/minutes/minute.entity';
 import { query } from 'express';
-//import { AssociationDTO } from './association.dto';
 
 /*
 const associations : Association[] = [
@@ -22,9 +20,6 @@ const associations : Association[] = [
 ]
 */
 
-
-//let id: number = 0;
-
 @Injectable()
 export class AssociationService {
 
@@ -35,9 +30,6 @@ export class AssociationService {
         private repository: Repository<Association>,
         @InjectRepository(Minute)
         private minuteRepository: Repository<Minute>,
-        /*
-        @InjectRepository(User)
-        private userRepository: Repository<User>*/
     ) {}
 
 
@@ -50,10 +42,9 @@ export class AssociationService {
         // Charger les rôles associés à l'association
         const roles = await this.repository.manager.getRepository(Role).find({
           where: { association: { id: association.id } },
-          relations: ['user'], // Charger les utilisateurs liés aux rôles
+          relations: ['user'], 
         });
     
-        // Transformer les utilisateurs et leurs rôles en membres
         const members: Member[] = roles.map((role) => {
           const member = new Member();     
           member.firstname = role.user.firstname;
@@ -74,7 +65,7 @@ export class AssociationService {
     }
 
     public async getById(idToFind): Promise<AssociationDTO>{
-        let filteredId = await this.repository.findOneBy(idToFind);
+        let filteredId = await this.repository.findOneBy({id: Equal(idToFind)});
         return this.toDTO(filteredId);
     }
 
@@ -90,40 +81,20 @@ export class AssociationService {
 
     
     public async getProcesByAssociation(id: number, sort: string, order: 'ASC' | 'DESC'): Promise<{content: string; date: Date}[]> {
-        console.log(id)
-        console.log(sort)
-        console.log(order)
-
         const validSortFields = ['date', 'content'];
         if (!validSortFields.includes(sort)) {
             throw new Error(`Invalid sort field: ${sort}`);
         }
     
-        // Créer la requête en utilisant les champs validés
         const query = this.minuteRepository.createQueryBuilder('minute')
             .select(['minute.content', 'minute.date'])
-            .where('minute.associationId = :id', { id }) // Utilisation de paramètres sécurisés
-            .orderBy(`minute.${sort}`, order as 'ASC' | 'DESC'); // Champ validé inséré directement
-    
-        // Debugging: Afficher la requête SQL générée
-        console.log('Generated SQL:', query.getSql());
+            .where('minute.associationId = :id', { id }) 
+            .orderBy(`minute.${sort}`, order as 'ASC' | 'DESC'); 
     
         const minutes = await query.getMany();
         return minutes;
     }
 
-/*
-    public async getAssociationsByUser(idToFind: number): Promise<Association[]> {
-        // Cherche l'utilisateur avec ses associations
-        const user = await this.userRepository.findOne({
-        where: { id: idToFind },
-        relations: ['associations'], // Charger les associations avec l'utilisateur
-        });
-
-        return user.associations; // Retourner les associations de l'utilisateur
-    }
-        
-*/
     //Post
     public async create(idUsers: number[], name: string): Promise<Association>{
 
@@ -159,7 +130,7 @@ export class AssociationService {
 
     //Delete
     public async deleteAssociation(idToFind): Promise<number>{
-        const index = this.repository.findOneBy(idToFind);
+        const index = this.repository.findOneBy({id: Equal(idToFind)});
         if (!index){
             return 1;
         }

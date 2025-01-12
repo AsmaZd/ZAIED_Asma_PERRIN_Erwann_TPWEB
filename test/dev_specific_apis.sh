@@ -49,4 +49,4 @@ get http://localhost:3000/associations/1/minutes 200 "sort=date"
 get http://localhost:3000/associations/1/minutes 200 "sort=date&order=ASC"
 
 get http://localhost:3000/roles/associations/1 200
-get http://localhost:3000/associations 200
+get http://localhost:3000/associations/2 200

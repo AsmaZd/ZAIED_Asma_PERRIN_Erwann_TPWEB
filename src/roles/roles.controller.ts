@@ -41,9 +41,7 @@ export class RolesController {
 
     @Get(':id_user/:id_association')
     public async getRole(@Param() parameter1, @Param() parameter2): Promise<Role>{
-        //console.log('test')
         const result = await this.service.getRole(+parameter1.id_user, +parameter2.id_association)
-        //console.log(result)
         if (result === null){
             throw new HttpException('Could not find a role with the id ${parameter1.id_user} or an association with the id ${parameter2.id_association)', HttpStatus.NOT_FOUND)
         }
@@ -58,9 +56,6 @@ export class RolesController {
         }
         return result;
     }
-        
-
-
         
 
     //POST

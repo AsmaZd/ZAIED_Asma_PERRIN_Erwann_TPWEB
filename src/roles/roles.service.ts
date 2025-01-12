@@ -45,8 +45,6 @@ export class RolesService {
 
     
     public async getUsersByRole(name: string): Promise<User[]>{
-        //console.log('hola')
-        //console.log(name)
         const roles = await this.repository.find({
             where: { name: name}, 
             relations: ['user']
@@ -61,10 +59,9 @@ export class RolesService {
     public async getAssociationsByUser(idToFind: number): Promise<{id: number, name: string, role: string}[]>{
         const roles = await this.repository.find({
             where: { id_user: idToFind },
-            relations: ['association'],  // Charger les associations avec les rôles
+            relations: ['association'],  
           });
       
-          // Extraire les associations uniques
           const associations = roles.map(role => ({
             id: role.association.id,
             name: role.association.name,
