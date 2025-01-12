@@ -17,7 +17,7 @@ export class Role{
     @JoinColumn({ name: 'id_user'})
     public user: User;
 
-    @ManyToOne(type => Association, {eager: true})
+    @ManyToOne(type => Association, {eager: true, onDelete: 'CASCADE'})
     @JoinColumn({ name: 'id_association'})
     public association: Association;
 
