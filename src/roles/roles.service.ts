@@ -73,7 +73,7 @@ export class RolesService {
 
     public async getAssociationsByUserAll(idToFind: number): Promise<{association_id: number, user_id: number, name: string, firstname: string, lastname: string, role: string}[]>{
         const roles = await this.repository.find({
-            where: { id_user: idToFind },
+            where: { id_association: idToFind },
             relations: ['association'],  
           });
       
