@@ -71,6 +71,24 @@ export class RolesService {
           return associations;
     }
 
+    public async getAssociationsByUserAll(idToFind: number): Promise<{association_id: number, user_id: number, name: string, firstname: string, lastname: string, role: string}[]>{
+        const roles = await this.repository.find({
+            where: { id_user: idToFind },
+            relations: ['association'],  
+          });
+      
+          const associations = roles.map(role => ({
+            association_id: role.association.id,
+            user_id: role.user.id,
+            name: role.association.name,
+            firstname: role.user.firstname,
+            lastname: role.user.lastname,
+            role: role.name
+          }));
+      
+          return associations;
+    }
+
     //Post
     public async create(name: string, id_user: number, id_association: number): Promise<Role> {
 

@@ -39,6 +39,11 @@ export class RolesController {
         return this.service.getAssociationsByUser(+parameter.id)
     }
 
+    @Get('associations/all/:id')
+    public async getAssociationsByUserAll(@Param() parameter): Promise<{association_id: number, user_id: number, name: string, firstname: string, lastname: string, role: string}[]>{
+        return this.service.getAssociationsByUserAll(+parameter.id)
+    }
+
     @Get(':id_user/:id_association')
     public async getRole(@Param() parameter1, @Param() parameter2): Promise<Role>{
         const result = await this.service.getRole(+parameter1.id_user, +parameter2.id_association)
