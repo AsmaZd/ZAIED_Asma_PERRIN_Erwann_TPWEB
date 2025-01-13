@@ -6,8 +6,6 @@ import * as bcrypt from 'bcrypt';
 import { Role } from 'src/roles/role.entity';
 import { RolesService } from 'src/roles/roles.service';
 
-let id: number = 0;
-
 @Injectable()
 export class UsersService {
 
@@ -36,7 +34,6 @@ export class UsersService {
 
     //Post
     public async create(lastname: string, firstname: string, age: number, password: string): Promise<User> {
-        id ++;
 
         let hash = undefined;
         if (password !== undefined){
@@ -45,7 +42,6 @@ export class UsersService {
         }
 
         let newUser = this.repository.create({
-            id: id, 
             firstname: firstname, 
             lastname: lastname, 
             age: age, 
