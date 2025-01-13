@@ -116,11 +116,11 @@ export class AssociationService {
 
     //Put
     public async putAssociation(idToFind, name: string, idUsers: number[]): Promise<Association>{
-        let filteredId : Association = await this.repository.findOneBy(idToFind); 
+        let filteredId : Association = await this.repository.findOneBy({id: Equal(idToFind)}); 
 
         if (idUsers !== undefined){
 
-            const users = await this.repository.manager.getRepository(User).findBy({
+            const users = await this.userRepository.findBy({
                 id: In(idUsers),
             });
 
