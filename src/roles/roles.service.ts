@@ -15,7 +15,7 @@ export class RolesService {
         @InjectRepository(Role)
         private repository: Repository<Role>,
         @Inject(forwardRef(() => UsersService))
-        private roleService : UsersService
+        private userService : UsersService
     ){}
 
     //Get
@@ -74,7 +74,7 @@ export class RolesService {
     //Post
     public async create(name: string, id_user: number, id_association: number): Promise<Role> {
 
-        const user = await this.repository.manager.getRepository(User).findOne({where: {id: id_user} });
+        const user = await this.userService.getById(id_user);
         const association= await this.repository.manager.getRepository(Association).findOne({where: {id: id_association} });
 
         let newRole = this.repository.create({
